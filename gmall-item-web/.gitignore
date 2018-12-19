@@ -23,3 +23,7 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+/gmall-item-web.iml
+/mvnw.cmd
+/.mvn/
+/mvnw

@@ -26,3 +26,6 @@
 /gmall-cart-service/.mvn/
 /mvnw
 
+/.mvn/
+/mvnw.cmd
+/gmall-cart-service.iml
