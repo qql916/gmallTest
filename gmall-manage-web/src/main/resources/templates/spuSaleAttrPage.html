@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--销售属性添加对话框-->
+<div id="spuSaleAttr_dlg" class="easyui-dialog" title="编辑销售属性" style="width:500px;height:400px;"
+     closed="true" data-options="iconCls:'icon-save',resizable:true,modal:false" buttons="#spuSaleAttrBtns">
+    <br/><br/>
+    <!------------------从基本销售属性中选择------------->
+    销售属性：  <select name="saleAttr" id="saleAttrSelect"  class="easyui-combobox" data-options="valueField:'id',textField:'name',url:'baseSaleAttrList'" style="width:100px">  </select>
+    <br/><br/>
+
+
+    <!----------------销售属性值列表---------------------------->
+    <table id="spuSaleAttrValueDg" class="easyui-datagrid" title="销售属性值列表"
+           data-options="singleSelect:true,method:'get',toolbar:'#spuSaleAttrValueTootbar'" ></table>
+
+
+
+
+    <!----------------销售属性值列表工具栏----------------------->
+    <div id="spuSaleAttrValueTootbar" style="padding:5px;height:auto"  >
+        <div style="margin-bottom:5px">
+            <a href="#" id="spuSaleAttrValueAddBtn" class="easyui-linkbutton" iconCls="icon-add" onclick="addSpuSaleAttrValue()" plain="true">添加</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeSpuSaleAttrValue()" >删除</a>
+        </div>
+    </div>
+
+
+    <div id="spuSaleAttrBtns">
+        <a href="#" class="easyui-linkbutton" onclick="saveSpuSaleAttr()">确 定</a>
+        <a href="#" class="easyui-linkbutton" onclick="closeSpuSaleAttr()">关 闭</a>
+    </div>
+</div>
+
+</div>
+<script language="JavaScript">
+    //初始化销售属性对话框
+    function initSpuSaleAttrDlg() {
+        // 清空销售属性值列表数据
+        $("#spuSaleAttrValueDg").datagrid('loadData',{total:0,rows:[]});
+        datagrid=$("#spuSaleAttrValueDg").datagrid({
+            columns:[[
+                {field:'saleAttrId',title:'销售属性编号',width:100},
+                {field:'saleAttrValueName',title:'销售属性值名称',width:100,
+                    editor:{type:"validatebox",options: { required: true}}
+                }
+            ]],
+            onDblClickRow: function (rowIndex, rowData) {
+                //双击开启编辑行
+                datagrid.datagrid("beginEdit", rowIndex);
+                //设定当失去焦点时,退出编辑状态
+                var saleAttrValueName = rowData.saleAttrValueName;
+                $("input.datagrid-editable-input").val(saleAttrValueName).bind("blur", function (evt) {
+                    datagrid.datagrid('endEdit', rowIndex);
+                });
+            }
+        });
+    }
+    //添加销售属性值
+    function addSpuSaleAttrValue() {
+
+        $('#spuSaleAttrValueDg').datagrid('appendRow',{
+            saleAttrId: '0',
+            saleAttrValueName: "新属性值"
+        });
+    }
+    //删除销售属性值列表中的属性值
+    function removeSpuSaleAttrValue() {
+        // 获得被选中的行
+        var row = $("#spuSaleAttrValueDg").datagrid("getSelected");
+        // 获得被选中的行的索引
+        var index = $("#spuSaleAttrValueDg").datagrid("getRowIndex",row);
+        // 根据索引删除行
+        $("#spuSaleAttrValueDg").datagrid("deleteRow",index);
+    }
+    //将数据暂存到销售属性列表中的数据表格中
+    function saveSpuSaleAttr() {
+        // 获得销售属性名，销售属性id，销售属性值暂存(集合)
+        var saleAttrId =$("#saleAttrSelect").combobox("getValue");
+        var saleAttrName = $("#saleAttrSelect").combobox("getText");
+        var spuSaleAttrValueJson = $("#spuSaleAttrValueDg").datagrid("getData");
+        console.log(spuSaleAttrValueJson);
+        //添加到销售属性列表数据表格中
+        $("#spuSaleAttrDg").datagrid("appendRow",{
+            saleAttrId:saleAttrId,
+            saleAttrName:saleAttrName,
+            spuSaleAttrValueJson:spuSaleAttrValueJson
+        });
+        //关闭销售属性添加对话框
+        $("#spuSaleAttr_dlg").dialog("close");
+    }
+</script>
+</body>
